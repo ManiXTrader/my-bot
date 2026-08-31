@@ -1,0 +1,6 @@
+{
+  "name": "MANI SIGNALS AI BOT",
+  "description": "AI-Powered Real-Time Binary & Forex Trading Signals Bot with Support & Resistance Analysis, OTC & Live Markets, and High Accuracy Pattern Detection.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
