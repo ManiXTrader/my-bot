@@ -35,6 +35,8 @@ export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
   const [minAccuracy, setMinAccuracy] = useState(96);
   const [scannedPairsCount, setScannedPairsCount] = useState(TRADING_PAIRS.length);
   const [lastScanTime, setLastScanTime] = useState<string>('Just now');
+  const [executingTradeId, setExecutingTradeId] = useState<string | null>(null);
+const [countdown, setCountdown] = useState<number>(0);
 
   // Multi-pair auto scan loop
   useEffect(() => {
@@ -233,34 +235,78 @@ export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
                     <div className="text-[10px] text-gray-400">Payout: {sig.pair.payout}%</div>
                   </div>
                <button
+               <button
   onClick={() => {
-    if (tradingMode !== 'DEMO') return;
+    if (tradingMode !== 'DEMO' || executingTradeId) return;
 
-    const isWin = Math.random() < 0.95;
-    const profit = isWin
-      ? 50 * (sig.pair.payout / 100)
-      : -50;
+    const durationMap: Record<string, number> = {
+      '5s': 5,
+      '15s': 15,
+      '30s': 30,
+      '1m': 60,
+      '2m': 120,
+      '5m': 300,
+    };
 
-    if (isWin) {
-      soundFx.playWin();
-    }
+    const duration = durationMap[sig.timeframe] ?? 60;
 
-    onTradeSignal(
-      {
-        ...sig,
-        status: isWin ? 'WON' : 'LOST',
-        resultProfit: profit,
-      },
-      isWin,
-      profit
-    );
+    setExecutingTradeId(sig.id);
+    setCountdown(duration);
+    soundFx.playClick();
+
+    let remaining = duration;
+
+    const timer = setInterval(() => {
+      remaining -= 1;
+      setCountdown(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        setExecutingTradeId(null);
+        setCountdown(0);
+
+        const isWin = Math.random() < 0.95;
+        const profit = isWin
+          ? 50 * (sig.pair.payout / 100)
+          : -50;
+
+        if (isWin) {
+          soundFx.playWin();
+        }
+
+        onTradeSignal(
+          {
+            ...sig,
+            status: isWin ? 'WON' : 'LOST',
+            resultProfit: profit,
+          },
+          isWin,
+          profit
+        );
+      }
+    }, 1000);
   }}
-  disabled={tradingMode !== 'DEMO'}
+  disabled={tradingMode !== 'DEMO' || executingTradeId !== null}
   className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition ${
-    tradingMode === 'DEMO'
+    tradingMode === 'DEMO' && !executingTradeId
       ? 'bg-blue-600 hover:bg-blue-500 text-white border-blue-500 cursor-pointer'
       : 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
   }`}
 >
-  {tradingMode === 'DEMO' ? '▶ EXECUTE DEMO' : 'LIVE DISABLED'}
+  {tradingMode !== 'DEMO'
+    ? 'LIVE DISABLED'
+    : executingTradeId === sig.id
+      ? `⏳ ${countdown}s`
+      : executingTradeId
+        ? 'WAIT...'
+        : '▶ EXECUTE DEMO'}
 </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
