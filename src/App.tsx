@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ActiveTab, BrokerType, Candlestick, LicenseData, MarketType, TradeSignal, TradingPair } from './types';
+import { ActiveTab, BrokerType, Candlestick, LicenseData, MarketType, TradeSignal, TradingPair, TradingMode } from './types';
 import { TRADING_PAIRS } from './data/pairs';
 import { getSavedLicense, revokeLicense } from './utils/license';
 import { generateInitialCandles, calculateSupportResistance } from './utils/marketEngine';
@@ -27,6 +27,7 @@ export default function App() {
   // Active Trading state
   const [currentBroker, setCurrentBroker] = useState<BrokerType>('POCKET_OPTION');
   const [currentMarket, setCurrentMarket] = useState<MarketType>('OTC');
+  const [tradingMode, setTradingMode] = useState<TradingMode>('DEMO');
   const [selectedPair, setSelectedPair] = useState<TradingPair>(TRADING_PAIRS[0]);
   const [candles, setCandles] = useState<Candlestick[]>(() => generateInitialCandles(TRADING_PAIRS[0], 35));
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -138,6 +139,53 @@ export default function App() {
       />
 
       {/* 2. Live Win Rate Marquee Ticker */}
+      {/* Demo / Live Trading Mode */}
+<div className="max-w-5xl mx-auto px-3 sm:px-6 pt-4">
+  <div className="flex items-center justify-between gap-4 p-3 rounded-2xl bg-[#161A1E] border border-gray-800 shadow-lg">
+    <div>
+      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+        Trading Mode
+      </p>
+      <p className={`text-sm font-extrabold font-['Rajdhani'] ${
+        tradingMode === 'DEMO' ? 'text-emerald-400' : 'text-red-400'
+      }`}>
+        {tradingMode === 'DEMO' ? 'DEMO MODE' : 'LIVE MODE'}
+      </p>
+    </div>
+
+    <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0B0E11] border border-gray-700">
+      <button
+        onClick={() => setTradingMode('DEMO')}
+        className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
+          tradingMode === 'DEMO'
+            ? 'bg-emerald-600 text-white shadow-lg'
+            : 'text-gray-500 hover:text-gray-300'
+        }`}
+      >
+        🟢 DEMO
+      </button>
+
+      <button
+        onClick={() => {
+          const confirmed = window.confirm(
+            'LIVE MODE selected. Only use an authorized/official trading connection. Continue?'
+          );
+
+          if (confirmed) {
+            setTradingMode('LIVE');
+          }
+        }}
+        className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
+          tradingMode === 'LIVE'
+            ? 'bg-red-600 text-white shadow-lg'
+            : 'text-gray-500 hover:text-gray-300'
+        }`}
+      >
+        🔴 LIVE
+      </button>
+    </div>
+  </div>
+</div>
       <MarqueeTicker
         pairs={TRADING_PAIRS}
         selectedPair={selectedPair}
