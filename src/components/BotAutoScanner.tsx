@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TradingPair, TradeSignal, BrokerType, TradingMode } from '../types';
+import { TradingPair, TradeSignal, BrokerType, } from '../types';
 import { TRADING_PAIRS } from '../data/pairs';
 import { generateInitialCandles, generateSignal } from '../utils/marketEngine';
 import { soundFx } from '../utils/audio';
@@ -21,23 +21,20 @@ import {
 
 interface BotAutoScannerProps {
   currentBroker: BrokerType;
-  tradingMode: TradingMode;
+  
   onTradeSignal: (signal: TradeSignal, isWin: boolean, profit: number) => void;
 }
 
 export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
   currentBroker,
-  tradingMode,
-  onTradeSignal,
+    onTradeSignal,
 }) => {
   const [isAutoRunning, setIsAutoRunning] = useState(false);
   const [autoSignals, setAutoSignals] = useState<TradeSignal[]>([]);
   const [minAccuracy, setMinAccuracy] = useState(96);
   const [scannedPairsCount, setScannedPairsCount] = useState(TRADING_PAIRS.length);
   const [lastScanTime, setLastScanTime] = useState<string>('Just now');
-  const [executingTradeId, setExecutingTradeId] = useState<string | null>(null);
-const [countdown, setCountdown] = useState<number>(0);
-
+ 
   // Multi-pair auto scan loop
   useEffect(() => {
     if (!isAutoRunning) return;
@@ -80,15 +77,15 @@ const [countdown, setCountdown] = useState<number>(0);
     <div className="w-full space-y-4">
       {/* Bot Controller Card */}
       <div className="p-5 sm:p-6 rounded-xl bg-[#161A1E] border border-gray-800 shadow-xl">
-        {/* Trading Mode */}
-<div className="mb-4 flex items-center justify-between p-3 rounded-xl bg-[#0B0E11] border border-gray-800">
-  <div>
-    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-      Trading Mode
-    </p>
-    <p
-      className={`text-sm font-extrabold font-['Rajdhani'] ${
-        tradingMode === 'DEMO' ? 'text-emerald-400' : 'text-red-400'
+            {/* Trading Mode */}
+    <div className="mb-4 flex items-center justify-between p-3 rounded-xl bg-[#0B0E11] border border-gray-800">
+      <div>
+        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+          Trading Mode
+        </p>
+        <p
+          className={`text-sm font-extrabold font-['Rajdhani'] ${
+            tradingMode === 'DEMO' ? 'text-emerald-400' : 'text-red-400'
       }`}
     >
       {tradingMode === 'DEMO' ? '🟢 DEMO MODE' : '🔴 LIVE MODE'}
