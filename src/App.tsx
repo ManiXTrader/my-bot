@@ -236,6 +236,7 @@ export default function App() {
           <div className="animate-in fade-in">
             <BotAutoScanner
               currentBroker={currentBroker}
+              tradingMode={tradingMode}
               onTradeSignal={handleSignalResult}
             />
           </div>
