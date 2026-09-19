@@ -131,6 +131,7 @@ export default function App() {
       {/* 1. Header */}
       <Header
         currentBroker={currentBroker}
+        tradingMode={tradingMode}
         onSelectBroker={setCurrentBroker}
         license={license}
         onLogout={handleLogout}
