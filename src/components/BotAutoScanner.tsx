@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TradingPair, TradeSignal, BrokerType } from '../types';
+import { TradingPair, TradeSignal, BrokerType, TradingMode } from '../types';
 import { TRADING_PAIRS } from '../data/pairs';
 import { generateInitialCandles, generateSignal } from '../utils/marketEngine';
 import { soundFx } from '../utils/audio';
@@ -21,11 +21,13 @@ import {
 
 interface BotAutoScannerProps {
   currentBroker: BrokerType;
+  tradingMode: TradingMode;
   onTradeSignal: (signal: TradeSignal, isWin: boolean, profit: number) => void;
 }
 
 export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
   currentBroker,
+  tradingMode,
   onTradeSignal,
 }) => {
   const [isAutoRunning, setIsAutoRunning] = useState(false);
