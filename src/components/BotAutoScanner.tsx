@@ -77,29 +77,6 @@ export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
     <div className="w-full space-y-4">
       {/* Bot Controller Card */}
       <div className="p-5 sm:p-6 rounded-xl bg-[#161A1E] border border-gray-800 shadow-xl">
-            {/* Trading Mode */}
-    <div className="mb-4 flex items-center justify-between p-3 rounded-xl bg-[#0B0E11] border border-gray-800">
-      <div>
-        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-          Trading Mode
-        </p>
-        <p
-          className={`text-sm font-extrabold font-['Rajdhani'] ${
-            tradingMode === 'DEMO' ? 'text-emerald-400' : 'text-red-400'
-      }`}
-    >
-      {tradingMode === 'DEMO' ? '🟢 DEMO MODE' : '🔴 LIVE MODE'}
-    </p>
-  </div>
-
-  <span
-    className={`text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg border ${
-      tradingMode === 'DEMO'
-        ? 'bg-emerald-950/50 text-emerald-400 border-emerald-800'
-        : 'bg-red-950/50 text-red-400 border-red-800'
-    }`}
-  >
-    {tradingMode === 'DEMO' ? 'SIMULATION' : 'AUTHORIZED CONNECTION'}
   </span>
 </div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-800">
