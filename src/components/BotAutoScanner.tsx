@@ -59,13 +59,7 @@ export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
         setAutoSignals((prev) => [newSig, ...prev.slice(0, 19)]);
         setLastScanTime(new Date().toLocaleTimeString());
 
-        // Simulate resolution after 4 seconds
-        setTimeout(() => {
-          const isWin = Math.random() < 0.95;
-          const profit = isWin ? 50 * (randomPair.payout / 100) : -50;
-          if (isWin) soundFx.playWin();
-          onTradeSignal({ ...newSig, status: isWin ? 'WON' : 'LOST', resultProfit: profit }, isWin, profit);
-        }, 4000);
+        
       }
     }, 5000);
 
