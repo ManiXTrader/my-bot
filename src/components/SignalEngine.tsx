@@ -31,8 +31,7 @@ import {
 
 interface SignalEngineProps {
   currentBroker: BrokerType;
-    tradingMode: TradingMode;
-  onSelectBroker: (broker: BrokerType) => void;
+     onSelectBroker: (broker: BrokerType) => void;
   selectedPair: TradingPair;
   onSelectPair: (pair: TradingPair) => void;
   currentMarket: MarketType;
@@ -43,8 +42,7 @@ interface SignalEngineProps {
 
 export const SignalEngine: React.FC<SignalEngineProps> = ({
   currentBroker,
-  tradingMode,
-  onSelectBroker,
+    onSelectBroker,
   selectedPair,
   onSelectPair,
   currentMarket,
