@@ -238,15 +238,35 @@ export const BotAutoScanner: React.FC<BotAutoScannerProps> = ({
                     <div className="text-blue-400 font-bold">{sig.accuracy}% Accuracy</div>
                     <div className="text-[10px] text-gray-400">Payout: {sig.pair.payout}%</div>
                   </div>
-                  <span className="px-2 py-1 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800 text-[10px] font-bold">
-                    SIGNAL EXECUTED
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+               <button
+  onClick={() => {
+    if (tradingMode !== 'DEMO') return;
+
+    const isWin = Math.random() < 0.95;
+    const profit = isWin
+      ? 50 * (sig.pair.payout / 100)
+      : -50;
+
+    if (isWin) {
+      soundFx.playWin();
+    }
+
+    onTradeSignal(
+      {
+        ...sig,
+        status: isWin ? 'WON' : 'LOST',
+        resultProfit: profit,
+      },
+      isWin,
+      profit
+    );
+  }}
+  disabled={tradingMode !== 'DEMO'}
+  className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition ${
+    tradingMode === 'DEMO'
+      ? 'bg-blue-600 hover:bg-blue-500 text-white border-blue-500 cursor-pointer'
+      : 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
+  }`}
+>
+  {tradingMode === 'DEMO' ? '▶ EXECUTE DEMO' : 'LIVE DISABLED'}
+</button>
