@@ -1,4 +1,4 @@
-export type TradingMode = 'DEMO' | 'LIVE';
+
 export type MarketType = 'OTC' | 'LIVE';
 
 export type AssetCategory = 'ALL' | 'FOREX' | 'CRYPTO' | 'COMMODITIES' | 'STOCKS' | 'INDICES';
