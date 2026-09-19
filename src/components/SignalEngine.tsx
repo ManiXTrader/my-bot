@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrokerType, MarketType, TimeFrame, TradeSignal, TradingPair, Candlestick, SupportResistance } from '../types';
+import { BrokerType, MarketType, TimeFrame, TradeSignal, TradingPair, Candlestick, SupportResistance, TradingMode } from '../types';
 import { TRADING_PAIRS } from '../data/pairs';
 import { generateSignal, timeframeToSeconds } from '../utils/marketEngine';
 import { soundFx } from '../utils/audio';
@@ -31,6 +31,7 @@ import {
 
 interface SignalEngineProps {
   currentBroker: BrokerType;
+    tradingMode: TradingMode;
   onSelectBroker: (broker: BrokerType) => void;
   selectedPair: TradingPair;
   onSelectPair: (pair: TradingPair) => void;
@@ -42,6 +43,7 @@ interface SignalEngineProps {
 
 export const SignalEngine: React.FC<SignalEngineProps> = ({
   currentBroker,
+  tradingMode,
   onSelectBroker,
   selectedPair,
   onSelectPair,
