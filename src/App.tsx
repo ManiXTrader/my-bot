@@ -300,20 +300,21 @@ export default function App() {
         />
       )}
 
-      {/* All pairs */}
-      {showAllPairsModal && (
-        <AllPairsModal
-          selectedPair={selectedPair}
-          onSelectPair={(pair) => {
-            setSelectedPair(pair);
-            setShowAllPairsModal(false);
-          }}
-          onClose={() =>
-            setShowAllPairsModal(false)
-          }
-        />
-      )}
-
+     {showAllPairsModal && (
+  <AllPairsModal
+    isOpen={showAllPairsModal}
+    onClose={() =>
+      setShowAllPairsModal(false)
+    }
+    selectedPair={selectedPair}
+    onSelectPair={(pair) => {
+      setSelectedPair(pair);
+      setShowAllPairsModal(false);
+    }}
+    currentMarket={currentMarket}
+    onSelectMarket={setCurrentMarket}
+  />
+  )}
     </div>
   );
 }
