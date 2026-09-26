@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrokerType, MarketType, TimeFrame, TradeSignal, TradingPair, Candlestick, SupportResistance, TradingMode } from '../types';
+import { BrokerType, MarketType, TimeFrame, TradeSignal, TradingPair, Candlestick,  } from '../types';
 import { TRADING_PAIRS } from '../data/pairs';
 import { generateSignal, timeframeToSeconds } from '../utils/marketEngine';
 import { soundFx } from '../utils/audio';
@@ -8,7 +8,7 @@ import confetti from 'canvas-confetti';
 import {
   Boxes,
   Globe,
-  Radio,
+  Radio,TradingMode
   Zap,
   CheckCircle2,
   TrendingUp,
