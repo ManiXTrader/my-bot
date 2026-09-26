@@ -245,12 +245,14 @@ export default function App() {
 
             {/* Signal engine */}
             <SignalEngine
-              pair={selectedPair}
-              candles={candles}
-              supportResistance={supportResistance}
-              currentBroker={currentBroker}
-              currentMarket={currentMarket}
-              onSignalResult={handleSignalResult}
+            currentBroker={currentBroker}
+            onSelectBroker={setCurrentBroker}
+            selectedPair={selectedPair}
+            onSelectPair={setSelectedPair}
+            currentMarket={currentMarket}
+            onSelectMarket={setCurrentMarket}
+            candles={candles}
+            onSignalResult={handleSignalResult}
             />
 
             {/* Auto scanner */}
