@@ -8,7 +8,8 @@ import confetti from 'canvas-confetti';
 import {
   Boxes,
   Globe,
-  Radio,TradingMode
+  Radio,
+  TradingMode,
   Zap,
   CheckCircle2,
   TrendingUp,
