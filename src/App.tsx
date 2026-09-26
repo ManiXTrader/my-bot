@@ -257,11 +257,9 @@ export default function App() {
 
             {/* Auto scanner */}
             <BotAutoScanner
-              currentBroker={currentBroker}
-              currentMarket={currentMarket}
-              selectedPair={selectedPair}
-              onSelectPair={setSelectedPair}
-            />
+             currentBroker={currentBroker}
+             onTradeSignal={handleSignalResult}
+             />
 
           </div>
         )}
