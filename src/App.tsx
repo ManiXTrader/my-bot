@@ -130,8 +130,13 @@ export default function App() {
     <div className="min-h-screen w-full bg-[#0B0E11] text-[#EAECEF] font-sans pb-28 selection:bg-blue-600/30 selection:text-blue-200">
       {/* 1. Header */}
       <Header
-       
-      />
+     currentBroker={currentBroker}
+  onSelectBroker={setCurrentBroker}
+  license={license}
+  onLogout={handleLogout}
+  onOpenSettings={() => setIsSettingsOpen(true)}
+  totalProfit={totalProfit}
+        />
     </div>
   );
 }
