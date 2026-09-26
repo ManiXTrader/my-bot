@@ -265,8 +265,9 @@ export default function App() {
         )}
 
         {activeTab === 'history' && (
-          <TradeHistory
-            history={tradeHistory}
+         <TradeHistory
+          history={tradeHistory}
+          onClearHistory={() => setTradeHistory([])}
           />
         )}
 
