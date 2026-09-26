@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ActiveTab, BrokerType, Candlestick, LicenseData, MarketType, TradeSignal, TradingPair, TradingMode } from './types';
+import { ActiveTab, BrokerType, Candlestick, LicenseData, MarketType, TradeSignal, TradingPair,  } from './types';
 import { TRADING_PAIRS } from './data/pairs';
 import { getSavedLicense, revokeLicense } from './utils/license';
 import { generateInitialCandles, calculateSupportResistance } from './utils/marketEngine';
