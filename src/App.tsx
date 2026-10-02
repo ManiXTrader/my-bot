@@ -332,10 +332,11 @@ export default function App() {
       />
 
       {/* MARKET TICKER */}
-      <MarqueeTicker
-        selectedPair={selectedPair}
-        onSelectPair={setSelectedPair}
-      />
+     <MarqueeTicker
+  pairs={TRADING_PAIRS}
+  selectedPair={selectedPair}
+  onSelectPair={setSelectedPair}
+/>
 
       {/* MAIN CONTENT */}
       <main className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
