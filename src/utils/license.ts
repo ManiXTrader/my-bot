@@ -3,8 +3,15 @@ import { LicenseData } from '../types';
 const STORAGE_KEY = 'mani_signals_license_auth';
 const CUSTOM_KEYS_STORAGE = 'mani_signals_custom_keys';
 
+type CustomLicenseKey = {
+  key: string;
+  owner: string;
+  plan: LicenseData['plan'];
+  expiry: string;
+};
+
 // Master Authorized Paid VIP Keys
-export const MASTER_VIP_KEYS: Array<{ key: string; owner: string; plan: LicenseData['plan']; expiry: string }> = [
+export const MASTER_VIP_KEYS: CustomLicenseKey[] = [
   {
     key: 'MANI-VIP-2026-PRO',
     owner: 'Mani Admin VIP (Owner)',
@@ -45,54 +52,122 @@ export const MASTER_VIP_KEYS: Array<{ key: string; owner: string; plan: LicenseD
 
 // Generate consistent device fingerprint
 export function getDeviceFingerprint(): string {
-  if (typeof window === 'undefined') return 'SRV-001';
+  if (typeof window === 'undefined') {
+    return 'SRV-001';
+  }
+
   let deviceId = localStorage.getItem('mani_device_hwid');
+
   if (!deviceId) {
-    const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height;
+    const raw =
+      navigator.userAgent +
+      navigator.language +
+      screen.width +
+      'x' +
+      screen.height;
+
     let hash = 0;
+
     for (let i = 0; i < raw.length; i++) {
       hash = (hash << 5) - hash + raw.charCodeAt(i);
       hash |= 0;
     }
-    deviceId = 'HWID-' + Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
+
+    deviceId =
+      'HWID-' +
+      Math.abs(hash)
+        .toString(16)
+        .toUpperCase()
+        .padStart(8, '0');
+
     localStorage.setItem('mani_device_hwid', deviceId);
   }
+
   return deviceId;
 }
 
 // Get dynamically stored custom keys created by owner
-export function getCustomKeys(): Array<{ key: string; owner: string; plan: LicenseData['plan']; expiry: string }> {
+export function getCustomKeys(): CustomLicenseKey[] {
   try {
     const raw = localStorage.getItem(CUSTOM_KEYS_STORAGE);
-    if (raw) {
-      return JSON.parse(raw);
+
+    if (!raw) {
+      return [];
     }
+
+    const parsed = JSON.parse(raw);
+
+    // IMPORTANT:
+    // Never return invalid/non-array localStorage data.
+    if (!Array.isArray(parsed)) {
+      localStorage.removeItem(CUSTOM_KEYS_STORAGE);
+      return [];
+    }
+
+    return parsed.filter(
+      (item): item is CustomLicenseKey =>
+        item &&
+        typeof item === 'object' &&
+        typeof item.key === 'string' &&
+        typeof item.owner === 'string' &&
+        typeof item.plan === 'string' &&
+        typeof item.expiry === 'string'
+    );
   } catch {
-    // ignore
+    localStorage.removeItem(CUSTOM_KEYS_STORAGE);
+    return [];
   }
-  return [];
 }
 
-export function saveCustomKey(keyData: { key: string; owner: string; plan: LicenseData['plan']; expiry: string }) {
+export function saveCustomKey(keyData: CustomLicenseKey) {
   const existing = getCustomKeys();
-  const filtered = existing.filter((k) => k.key !== keyData.key);
+
+  const filtered = existing.filter(
+    (k) => k.key !== keyData.key
+  );
+
   filtered.push(keyData);
-  localStorage.setItem(CUSTOM_KEYS_STORAGE, JSON.stringify(filtered));
+
+  localStorage.setItem(
+    CUSTOM_KEYS_STORAGE,
+    JSON.stringify(filtered)
+  );
 }
 
 // Generate new random authorized key
-export function generateNewLicenseKey(ownerName: string = 'VIP Trader', plan: LicenseData['plan'] = 'VIP_LIFETIME'): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const segment = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  const key = `MANI-${segment()}-${segment()}-${segment()}`;
-  
+export function generateNewLicenseKey(
+  ownerName: string = 'VIP Trader',
+  plan: LicenseData['plan'] = 'VIP_LIFETIME'
+): string {
+  const chars =
+    'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+  const segment = () =>
+    Array.from(
+      { length: 4 },
+      () =>
+        chars[
+          Math.floor(Math.random() * chars.length)
+        ]
+    ).join('');
+
+  const key =
+    `MANI-${segment()}-${segment()}-${segment()}`;
+
   const expiryDate = new Date();
+
   if (plan === 'VIP_LIFETIME') {
-    expiryDate.setFullYear(expiryDate.getFullYear() + 75);
+    expiryDate.setFullYear(
+      expiryDate.getFullYear() + 75
+    );
   } else if (plan === 'PRO_ANNUAL') {
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    expiryDate.setFullYear(
+      expiryDate.getFullYear() + 1
+    );
   } else {
-    expiryDate.setMonth(expiryDate.getMonth() + 6);
+    expiryDate.setMonth(
+      expiryDate.getMonth() + 6
+    );
   }
 
   saveCustomKey({
@@ -105,15 +180,34 @@ export function generateNewLicenseKey(ownerName: string = 'VIP Trader', plan: Li
   return key;
 }
 
-// Validate Key (Checks Master list + Custom saved list + Algorithm signature)
-export function validateLicenseKey(rawInputKey: string): { valid: boolean; license?: LicenseData; message?: string } {
+// Validate License Key
+export function validateLicenseKey(
+  rawInputKey: string
+): {
+  valid: boolean;
+  license?: LicenseData;
+  message?: string;
+} {
   const cleanKey = rawInputKey.trim().toUpperCase();
+
   if (!cleanKey) {
-    return { valid: false, message: 'Please enter a valid license key.' };
+    return {
+      valid: false,
+      message: 'Please enter a valid license key.',
+    };
   }
 
-  const allKeys = [...MASTER_VIP_KEYS, ...getCustomKeys()];
-  const match = allKeys.find((k) => k.key.toUpperCase() === cleanKey);
+  const customKeys = getCustomKeys();
+
+  // Safe array combination
+  const allKeys: CustomLicenseKey[] = [
+    ...MASTER_VIP_KEYS,
+    ...customKeys,
+  ];
+
+  const match = allKeys.find(
+    (k) => k.key.toUpperCase() === cleanKey
+  );
 
   if (match) {
     const license: LicenseData = {
@@ -125,11 +219,18 @@ export function validateLicenseKey(rawInputKey: string): { valid: boolean; licen
       deviceId: getDeviceFingerprint(),
       isValid: true,
     };
-    return { valid: true, license };
+
+    return {
+      valid: true,
+      license,
+    };
   }
 
-  // Algorithm signature check: format MANI-XXXX-XXXX-XXXX
-  const regex = /^MANI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+  // Algorithm signature check:
+  // MANI-XXXX-XXXX-XXXX
+  const regex =
+    /^MANI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+
   if (regex.test(cleanKey)) {
     const license: LicenseData = {
       key: cleanKey,
@@ -140,37 +241,56 @@ export function validateLicenseKey(rawInputKey: string): { valid: boolean; licen
       deviceId: getDeviceFingerprint(),
       isValid: true,
     };
-    return { valid: true, license };
+
+    return {
+      valid: true,
+      license,
+    };
   }
 
   return {
     valid: false,
-    message: 'Invalid License Key! This BOT is strictly locked. Contact Owner (@ManiAdmin) for official paid license key.',
+    message:
+      'Invalid License Key! This BOT is strictly locked. Contact Owner (@ManiAdmin) for official paid license key.',
   };
 }
 
 // Save active session
-export function saveActiveLicense(license: LicenseData) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(license));
+export function saveActiveLicense(
+  license: LicenseData
+) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(license)
+  );
 }
 
 // Get current session
 export function getSavedLicense(): LicenseData | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw =
+      localStorage.getItem(STORAGE_KEY);
+
     if (raw) {
-      const parsed: LicenseData = JSON.parse(raw);
-      if (parsed && parsed.isValid && parsed.key) {
+      const parsed: LicenseData =
+        JSON.parse(raw);
+
+      if (
+        parsed &&
+        parsed.isValid &&
+        parsed.key
+      ) {
         return parsed;
       }
     }
   } catch {
-    // ignore
+    // Ignore invalid saved license
   }
+
   return null;
 }
 
-// Clear license (Sign out / Lock)
+// Clear license
 export function revokeLicense() {
   localStorage.removeItem(STORAGE_KEY);
 }
