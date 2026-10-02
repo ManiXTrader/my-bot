@@ -345,7 +345,7 @@ export const SignalEngine: React.FC<SignalEngineProps> = ({
               onSelectPair(firstOtc);
             }
           }}
-         className={`relative p-3.5 rounded-xl border transition-all duration-200 flex items-center gap-3 cursor-pointer ${
+       className={`relative p-3.5 rounded-xl border transition-all duration-200 flex items-center gap-3 cursor-pointer ${
             currentMarket === 'OTC'
               ? 'bg-blue-600/15 border-blue-500 shadow-md shadow-blue-900/20 text-white'
               : 'bg-[#161A1E] border-gray-800 hover:border-gray-700 text-gray-400'
